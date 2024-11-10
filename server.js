@@ -31,6 +31,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("updateVitals", (data) => {
+    console.log("vitals got: ", data);
     io.to(`hospital_staff`).emit("vitalsUpdate", {
       // timestamp: new Date(),
       ...data,
