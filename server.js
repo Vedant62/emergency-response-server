@@ -10,10 +10,10 @@ const activeAmbulance = new Map();
 
 io.on("connection", (socket) => {
   console.log("Client connected:", socket.id);
-  console.log("socket: ", socket);
+//   console.log("socket: ", socket);
 
   socket.on("registerAmbulance", (ambulanceData) => {
-    console.log("Succesfully registered!!");
+    console.log("Succesfully registered!! ambulance got: ", ambulanceData);
     activeAmbulance.set(socket.id, {
       availability: "engaged",
       ...ambulanceData,
@@ -24,6 +24,7 @@ io.on("connection", (socket) => {
   socket.on("createEmergencyCase", (caseData) => {
     // const caseId = generateCaseId();
     // socket.join(`case_${caseId}`);
+    console.log('successfully created new case: ', caseData);
     io.to("hospital_staff").emit("newEmergencyCase", {
       ...caseData,
     });
