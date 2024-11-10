@@ -38,6 +38,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("updateLocation", (locationData) => {
+    console.log('location update: ', locationData);
     if (activeAmbulance.has(socket.id)) {
       activeAmbulance.location = locationData;
       io.to(`hospital_staff`).emit("ambulanceLocationUpdate", {
