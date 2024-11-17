@@ -10,41 +10,64 @@ const activeAmbulance = new Map();
 
 io.on("connection", (socket) => {
   console.log("Client connected:", socket.id);
-  //   console.log("socket: ", socket);
 
-  socket.on("registerAmbulance", (ambulanceData) => {
-    console.log("Succesfully registered!! ambulance got: ", ambulanceData);
-
-    io.emit("ambulanceListUpdate", ambulanceData);
+  socket.on("registerAmbulance", ({ ambulanceId, ambulanceData }) => {
+    socket.ambulanceId = ambulanceId;
+    console.log("Succesfully registered!! ambulance got: ", {
+      ambulanceId: socket.ambulanceId,
+      ambulanceData,
+    });
+    io.emit("ambulanceListUpdate", {
+      ambulanceId: socket.ambulanceId,
+      ambulanceData,
+    });
   });
 
   socket.on("joinRoom", (roomData) => {
-    socket.join(roomData["roomId"]);
+    socket.join(roomData.roomId);
   });
 
   socket.on("createEmergencyCase", (caseData) => {
-    // const caseId = generateCaseId();
-    // socket.join(`case_${caseId}`);
-    console.log("successfully created new case: ", caseData);
+    const ambulanceId = socket.ambulanceId;
+    console.log("successfully created new case: ", {
+      caseId: socket.currentCase,
+      ambulanceId,
+      caseData,
+    });
     io.to("hospital_staff").emit("newEmergencyCase", {
-      ...caseData,
+      caseId: socket.currentCase,
+      ambulanceId,
+      caseData,
     });
   });
 
-  socket.on("updateVitals", (data) => {
-    console.log("vitals got: ", data);
-    io.to(`hospital_staff`).emit("vitalsUpdate", {
-      // timestamp: new Date(),
-      ...data,
+  socket.on("updateVitals", (vitalsData) => {
+    const ambulanceId = socket.ambulanceId;
+    const caseId = socket.currentCase;
+    console.log("vitals got: ", {
+      ambulanceId,
+      caseId,
+      vitalsData,
     });
+    io.to(`hospital_staff`).emit("vitalsUpdate", {
+      ambulanceId,
+      caseId,
+      vitalsData,
+    });
+  });
+
+  socket.on("setCase", (caseId) => {
+    socket.currentCase = caseId.case;
   });
 
   socket.on("updateLocation", (locationData) => {
     console.log("location update: ", locationData);
+    const ambulanceId = socket.ambulanceId;
     if (activeAmbulance.has(socket.id)) {
       activeAmbulance.location = locationData;
       io.to(`hospital_staff`).emit("ambulanceLocationUpdate", {
-        ...locationData,
+        ambulanceId,
+        locationData,
       });
     }
   });
