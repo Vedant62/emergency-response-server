@@ -18,6 +18,10 @@ io.on("connection", (socket) => {
     io.emit("ambulanceListUpdate", ambulanceData);
   });
 
+  socket.on("joinRoom", (roomData) => {
+    socket.join(roomData["roomId"]);
+  });
+
   socket.on("createEmergencyCase", (caseData) => {
     // const caseId = generateCaseId();
     // socket.join(`case_${caseId}`);
