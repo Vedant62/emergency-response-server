@@ -73,13 +73,12 @@ io.on("connection", (socket) => {
       ambulanceId,
       locationData,
     });
-    if (activeAmbulance.has(socket.id)) {
-      activeAmbulance.location = locationData;
-      io.emit("ambulanceLocationUpdate", {
-        ambulanceId,
-        locationData,
-      });
-    }
+
+    activeAmbulance.location = locationData;
+    io.emit("ambulanceLocationUpdate", {
+      ambulanceId,
+      locationData,
+    });
   });
 
   socket.on("disconnect", () => {
