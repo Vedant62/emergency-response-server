@@ -41,7 +41,7 @@ io.on("connection", (socket) => {
       ambulanceId,
       caseData,
     });
-    io.to("hospital_staff").emit("newEmergencyCase", {
+    io.emit("newEmergencyCase", {
       caseId: socket.currentCase,
       ambulanceId,
       caseData,
@@ -56,7 +56,7 @@ io.on("connection", (socket) => {
       caseId,
       vitalsData,
     });
-    io.to(`hospital_staff`).emit("vitalsUpdate", {
+    io.emit("vitalsUpdate", {
       ambulanceId,
       caseId,
       vitalsData,
@@ -75,7 +75,7 @@ io.on("connection", (socket) => {
     });
     if (activeAmbulance.has(socket.id)) {
       activeAmbulance.location = locationData;
-      io.to(`hospital_staff`).emit("ambulanceLocationUpdate", {
+      io.emit("ambulanceLocationUpdate", {
         ambulanceId,
         locationData,
       });
